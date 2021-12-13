@@ -75,6 +75,7 @@ var parsePrimaryKeys = map[string]string{
 	"uuid.UUID": "parseUUID",
 	"time.Time": "parseTime",
 	"varbinary": "parseBytes",
+	"binary":    "parseBytes",
 }
 
 var reservedFieldNames = map[string]bool{
