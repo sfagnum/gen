@@ -14,7 +14,7 @@ import (
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/smallnest/gen/dbmeta"
+	"github.com/sfagnum/gen/dbmeta"
 )
 
 var (
@@ -37,9 +37,8 @@ func init() {
 
 `
 
-	//Parse options
+	// Parse options
 	goopt.Parse(nil)
-
 }
 
 func main() {
@@ -109,7 +108,6 @@ func main() {
 		fmt.Printf("[%s]\n", tableName)
 
 		tableInfo, err := dbmeta.LoadMeta(*sqlType, db, *sqlDatabase, tableName)
-
 		if err != nil {
 			fmt.Printf("Error getting table info for %s error: %v\n\n\n\n", tableName, err)
 			continue

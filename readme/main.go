@@ -15,7 +15,7 @@ import (
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 
-	"github.com/smallnest/gen/dbmeta"
+	"github.com/sfagnum/gen/dbmeta"
 )
 
 var (
@@ -38,7 +38,7 @@ func init() {
            sqltype - sql database type such as [ mysql, mssql, postgres, sqlite, etc. ]
 
 `
-	//Parse options
+	// Parse options
 	goopt.Parse(nil)
 }
 
@@ -50,12 +50,11 @@ func GenHelp() string {
 		log.Fatal(err)
 	}
 
-	//fmt.Printf("%s\n", stdoutStderr)
+	// fmt.Printf("%s\n", stdoutStderr)
 	return string(stdoutStderr)
 }
 
 func main() {
-
 	baseTemplates = packr.New("gen", "../template")
 
 	err := loadDefaultDBMappings()
@@ -105,7 +104,6 @@ func main() {
 		conf.ContextMap["GenHelp"] = help
 		genreadme(conf, "GEN_README.md.tmpl", "./README.md", ctx)
 	}
-
 }
 
 func genreadme(conf *dbmeta.Config, templateName, outputFile string, ctx map[string]interface{}) {
@@ -207,7 +205,6 @@ func initialize(conf *dbmeta.Config) {
 }
 
 func initializeDB() (db *sql.DB, err error) {
-
 	db, err = sql.Open(*sqlType, *sqlConnStr)
 	if err != nil {
 		fmt.Printf("Error in open database: %v\n\n", err.Error())

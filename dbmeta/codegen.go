@@ -5,19 +5,18 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"path"
-	"time"
-
-	"github.com/smallnest/gen/utils"
-
 	"go/format"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"reflect"
 	"regexp"
 	"strings"
 	"text/template"
+	"time"
+
+	"github.com/sfagnum/gen/utils"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/jinzhu/inflection"
@@ -56,11 +55,11 @@ func replace(input, from, to string) string {
 // Replace takes a template based name format and will render a name using it
 func Replace(nameFormat, name string) string {
 	var tpl bytes.Buffer
-	//fmt.Printf("Replace: %s\n",nameFormat)
+	// fmt.Printf("Replace: %s\n",nameFormat)
 	t := template.Must(template.New("t1").Funcs(replaceFuncMap).Parse(nameFormat))
 
 	if err := t.Execute(&tpl, name); err != nil {
-		//fmt.Printf("Error creating name format: %s error: %v\n", nameFormat, err)
+		// fmt.Printf("Error creating name format: %s error: %v\n", nameFormat, err)
 		return name
 	}
 	result := tpl.String()
@@ -69,7 +68,7 @@ func Replace(nameFormat, name string) string {
 	result = strings.Replace(result, " ", "_", -1)
 	result = strings.Replace(result, "\t", "_", -1)
 
-	//fmt.Printf("Replace( '%s' '%s')= %s\n",nameFormat, name, result)
+	// fmt.Printf("Replace( '%s' '%s')= %s\n",nameFormat, name, result)
 	return result
 }
 
@@ -91,7 +90,7 @@ func (c *Config) ReplaceFieldNamingTemplate(name string) string {
 // GetTemplate return a Template based on a name and template contents
 func (c *Config) GetTemplate(genTemplate *GenTemplate) (*template.Template, error) {
 	var s State
-	var funcMap = template.FuncMap{
+	funcMap := template.FuncMap{
 		"ReplaceFileNamingTemplate":  c.ReplaceFileNamingTemplate,
 		"ReplaceModelNamingTemplate": c.ReplaceModelNamingTemplate,
 		"ReplaceFieldNamingTemplate": c.ReplaceFieldNamingTemplate,
@@ -251,7 +250,6 @@ func markdownCodeBlock(contentType, content string) string {
 }
 
 func wrapBash(content string) string {
-
 	r := csv.NewReader(strings.NewReader(content))
 	r.Comma = ' '
 	record, err := r.Read()
@@ -276,9 +274,9 @@ func wrapBash(content string) string {
 	//
 	//
 
-	//splitter := "[^\\s\"']+|\"[^\"]*\"|'[^']*'"
-	//result := RegSplit(content, splitter)
-	//return strings.Join(result, " \\\n    ")
+	// splitter := "[^\\s\"']+|\"[^\"]*\"|'[^']*'"
+	// result := RegSplit(content, splitter)
+	// return strings.Join(result, " \\\n    ")
 
 	//
 	//result, err := parseCommandLine(content)
@@ -498,7 +496,7 @@ func (c *Config) GenerateTableFile(tableName, templateFilename, outputDirectory,
 
 // CreateContextForTableFile create map context for a db table
 func (c *Config) CreateContextForTableFile(tableInfo *ModelInfo) map[string]interface{} {
-	var modelInfo = map[string]interface{}{
+	modelInfo := map[string]interface{}{
 		"StructName":      tableInfo.StructName,
 		"TableName":       tableInfo.DBMeta.TableName(),
 		"ShortStructName": strings.ToLower(string(tableInfo.StructName[0])),
@@ -542,7 +540,7 @@ func (c *Config) CreateContextForTableFile(tableInfo *ModelInfo) map[string]inte
 
 // WriteTemplate write a template out
 func (c *Config) WriteTemplate(genTemplate *GenTemplate, data map[string]interface{}, outputFile string) error {
-	//fmt.Printf("WriteTemplate %s\n", outputFile)
+	// fmt.Printf("WriteTemplate %s\n", outputFile)
 
 	if !c.Overwrite && Exists(outputFile) {
 		fmt.Printf("not overwriting %s\n", outputFile)
@@ -689,7 +687,6 @@ func (c *Config) GenerateFile(templateFilename, outputDirectory, outputFileName 
 
 // DisplayConfig display config info
 func (c *Config) DisplayConfig() string {
-
 	info := fmt.Sprintf(
 		`DisplayConfig
   SQLType      : %s
@@ -741,7 +738,7 @@ func (c *Config) FileSystemCopy(src, dst string, options ...string) string {
 
 		for _, r := range patterns {
 			if r.r.Match([]byte(name)) {
-				//fmt.Printf("copy ShouldCopy %s  pattern: [%s]  result: %t\n", name, r.pattern, r.result)
+				// fmt.Printf("copy ShouldCopy %s  pattern: [%s]  result: %t\n", name, r.pattern, r.result)
 				return r.result
 			}
 		}
@@ -750,7 +747,6 @@ func (c *Config) FileSystemCopy(src, dst string, options ...string) string {
 	}
 
 	opt.FileHandler = func(src, dest string, info os.FileInfo) utils.FileHandlerFunc {
-
 		if !opt.ShouldCopy(info) {
 			return func(src, dest string, info os.FileInfo, opt utils.Options, results *utils.Results) (err error) {
 				results.Info.WriteString(fmt.Sprintf("CopyFile Skipping %s\n", src))
@@ -759,11 +755,11 @@ func (c *Config) FileSystemCopy(src, dst string, options ...string) string {
 		}
 
 		if strings.HasSuffix(src, ".table.tmpl") {
-			//fmt.Printf("@@ HandleTableTemplateFile: src: %s  dest: %s Name: %s\n", src, dest, info.Name())
+			// fmt.Printf("@@ HandleTableTemplateFile: src: %s  dest: %s Name: %s\n", src, dest, info.Name())
 			return c.tableFileHandlerFunc
 		}
 		if strings.HasSuffix(src, ".tmpl") {
-			//fmt.Printf("@@ HandleTemplateFile: src: %s  dest: %s Name: %s\n", src, dest, info.Name())
+			// fmt.Printf("@@ HandleTemplateFile: src: %s  dest: %s Name: %s\n", src, dest, info.Name())
 			return c.fileHandlerFunc
 		}
 
@@ -787,7 +783,6 @@ func (c *Config) Mkdir(dst string) string {
 	err := os.MkdirAll(dstDir, os.ModePerm)
 	if err != nil {
 		return fmt.Sprintf("mkdir returned an error %v", err)
-
 	}
 	return fmt.Sprintf("mkdir %s", dstDir)
 }
